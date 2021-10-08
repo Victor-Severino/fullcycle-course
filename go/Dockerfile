@@ -1,11 +1,12 @@
 # Stage 1
-FROM golang:1.17-alpine AS builder
+FROM golang:1.16-alpine3.13 AS builder
 
 WORKDIR /go/src/app
 COPY . .
-RUN go mod init example/hello && \
-    go get -d -v ./... && \
-    go install -v ./...
+
+RUN go mod init example/hello
+RUN go get -d -v ./...
+RUN go install -v ./...
 
 # Stage 2
 FROM scratch
