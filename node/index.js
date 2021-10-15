@@ -17,12 +17,25 @@ const createTableStmt = `create table if not exists people(
 
 connection.query(createTableStmt)
 
-const sql = `INSERT INTO people(name) values('Victor')`
-connection.query(sql)
+const insertStmt = `INSERT INTO people(name) values('Victor')`
+connection.query(insertStmt)
 connection.end()
 
 app.get("/", (req, res) => {
-  res.send("<h1>Full Cycle Rocks!</h1>")
+  let peopleList = ""
+  const queryStmt = "SELECT * FROM people"
+  const mysqlPromise = require("mysql2/promise")
+  mysqlPromise
+    .createConnection(config)
+    .then((conn) => conn.query(queryStmt))
+    .then(([rows, fields]) => {
+      rows.map((r) => (peopleList += `<li>${r.name}</li>`))
+
+      res.send(`
+        <h1>Full Cycle Rocks!</h1>
+        <ul>${peopleList}</ul>
+      `)
+    })
 })
 
 app.listen(port, () => {
